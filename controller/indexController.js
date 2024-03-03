@@ -52,6 +52,7 @@ module.exports.submitHandler = async (req, res) => {
             code: randomString,
             message: req.body.message,
             name: req.body.name,
+            contact: req.body.contact,
         });
         await emailToVerify.save();
 
@@ -135,6 +136,7 @@ module.exports.verifyCode = async (req, res) => {
                 email: messageToVerify.email,
                 message: messageToVerify.message,
                 name: messageToVerify.name,
+                contact: messageToVerify.contact,
             });
 
             await verifiedMessage.save();
@@ -143,7 +145,12 @@ module.exports.verifyCode = async (req, res) => {
                 from: process.env.EMAIL,
                 to: process.env.SUP_EMAIL,
                 subject: "You have new Message from Pediatric Surgeon",
-                text: `name: ${messageToVerify.name} email: ${messageToVerify.email} message: ${messageToVerify.message}`,
+                html: `
+                    <p><strong>Name:</strong> ${messageToVerify.name}</p>
+                    <p><strong>Contact:</strong> ${messageToVerify.contact}</p>
+                    <p><strong>Email:</strong> ${messageToVerify.email}</p>
+                    <p><strong>Message:</strong> ${messageToVerify.message}</p>
+                `,
             };
             transporter.sendMail(mailToBeSentToDoc, function (error, info) {
                 if (error) {
