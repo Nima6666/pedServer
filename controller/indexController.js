@@ -34,6 +34,12 @@ module.exports.submitHandler = async (req, res) => {
     const randomString = generateRandomAlphanumericString(6);
 
     try {
+        const fiveMinutesAgo = Date.now() - 0.5 * 60 * 1000;
+
+        await UnverifiedMessageToSend.deleteMany({
+            time: { $lt: fiveMinutesAgo },
+        });
+
         const emailFound = await UnverifiedMessageToSend.findOne({
             email: req.body.email,
         });
@@ -78,12 +84,6 @@ module.exports.submitHandler = async (req, res) => {
                 });
             }
         });
-        setTimeout(async () => {
-            await UnverifiedMessageToSend.findOneAndDelete({
-                email: req.body.email,
-            });
-            console.log("Verification code deleted.");
-        }, 5 * 60 * 1000);
     } catch (error) {
         console.log(error);
         return res.json({ success: false, error });
@@ -140,6 +140,7 @@ module.exports.verifyCode = async (req, res) => {
             });
 
             await verifiedMessage.save();
+            await messageToVerify.deleteOne();
 
             const mailToBeSentToDoc = {
                 from: process.env.EMAIL,

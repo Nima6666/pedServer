@@ -6,6 +6,7 @@ const verificationSchema = new mongoose.Schema({
     code: { type: String, require: true },
     message: { type: String, required: true },
     contact: { type: Number, required: true },
+    time: { type: Date, default: Date.now },
 });
 
 module.exports = mongoose.model("UnverifiedMessageToSend", verificationSchema);
