@@ -34,7 +34,7 @@ module.exports.submitHandler = async (req, res) => {
     const randomString = generateRandomAlphanumericString(6);
 
     try {
-        const fiveMinutesAgo = Date.now() - 0.5 * 60 * 1000;
+        const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
 
         await UnverifiedMessageToSend.deleteMany({
             time: { $lt: fiveMinutesAgo },
